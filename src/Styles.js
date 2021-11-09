@@ -18,6 +18,15 @@ const styles = StyleSheet.create({
     highlight: {
       fontWeight: '700',
     },
+
+    productCard: {
+      marginBottom: 5,
+      marginTop: 5
+    },
+
+    viewStyle: {
+      padding: 5
+    }
 });
 export {styles}
 
@@ -26,6 +35,7 @@ const colors = {
   blue: '#1976D2',
   red: '#F44336',
   green: '#4CAF50',
+  white: '#FFFFFF'
 };
 
 export {colors}

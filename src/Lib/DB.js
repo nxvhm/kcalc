@@ -21,10 +21,15 @@ class Database {
         })
     }
 
+    init() {
+        return this.exec(
+            "CREATE TABLE IF NOT EXISTS Products(name VARCHAR(255), calories FLOAT, carbs FLOAT, fats FLOAT, protein FLOAT, description TEXT, photo TEXT)"
+        );
+    }
 
-
-    test() {
-        console.log('dasdasdas');
+    getProducts()
+    {
+        return this.exec("SELECT *, Products.rowid FROM Products");
     }
 }
 

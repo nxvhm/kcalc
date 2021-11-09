@@ -12,16 +12,17 @@ import { NavigationContainer } from '@react-navigation/native';
 import {
   useColorScheme
 } from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import DB from './src/Lib/DB';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 import {BottomStackNavigator } from './src/Navigation/StackNavigator';
+
+DB.init().then(res => {
+  console.log('SUCCESS DB INIT', res);
+})
+.catch(err => {
+  console.log("Error during db init", err);
+});
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
