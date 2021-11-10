@@ -1,6 +1,14 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
 
+const colors = {
+  purple: '#673AB7',
+  blue: '#1976D2',
+  red: '#F44336',
+  green: '#4CAF50',
+  white: '#FFFFFF'
+};
+
 const styles = StyleSheet.create({
     sectionContainer: {
       marginTop: 32,
@@ -26,17 +34,20 @@ const styles = StyleSheet.create({
 
     viewStyle: {
       padding: 5
+    },
+
+    viewStyle2: {
+      padding: 15,
+      backgroundColor: '#fff',
+    },
+
+    bottomBtn: {
+      backgroundColor: colors.purple,
+      marginBottom: 30,
+      marginTop: 15
     }
 });
 export {styles}
-
-const colors = {  
-  purple: '#673AB7',
-  blue: '#1976D2',
-  red: '#F44336',
-  green: '#4CAF50',
-  white: '#FFFFFF'
-};
 
 export {colors}
 
