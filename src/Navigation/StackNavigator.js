@@ -7,6 +7,7 @@ import HomeScreen from '../Screens/Home';
 import ProductsList from '../Screens/Products/List';
 import ProductsAdd from '../Screens/Products/Add';
 import Statistics from '../Screens/Statistcis';
+import AddMeal from "../Screens/AddMeal";
 import {colors} from '../Styles';
 
 const Tab = createMaterialBottomTabNavigator();
@@ -16,7 +17,10 @@ const ProductStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
     return (
         <HomeStack.Navigator initialRouteName="HomeScreen">
-            <HomeStack.Screen name="HomeScreen" component={HomeScreen}  options={{ headerTitle: "Home"}} />        
+            <HomeStack.Screen name="HomeScreen" component={HomeScreen}  options={{ headerTitle: "Home"}} />
+            <HomeStack.Screen name="AddMeal" component={AddMeal} options={{
+              headerTitle: "Add Meal"
+            }}/>
         </HomeStack.Navigator>
     )
 }

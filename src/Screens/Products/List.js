@@ -1,7 +1,7 @@
 import React, {useState, Component} from "react";
 
-import {View, Text, SafeAreaView, ScrollView } from 'react-native';
-import { Button, IconButton, Card, Paragraph } from 'react-native-paper';
+import { SafeAreaView, ScrollView } from 'react-native';
+import { IconButton, Card, Paragraph } from 'react-native-paper';
 import {styles, colors} from '../../Styles';
 import DB from "../../Lib/DB";
 import { showMessage } from "react-native-flash-message";

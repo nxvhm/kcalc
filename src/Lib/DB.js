@@ -57,6 +57,11 @@ class Database {
       return this.exec("SELECT *, Products.rowid FROM products WHERE Products.rowid = ?", [productId]);
     }
 
+    getProductsByName(name, limit = 5) {
+      let q = "SELECT *, Products.rowid FROM products WHERE name LIKE ? LIMIT ?";
+      return this.exec(q, ['%'+name+'%', limit]);
+    }
+
     saveProduct(product)
     {
       let query = "INSERT INTO Products (name, calories, carbs, sugar, fats, protein) VALUES (?,?,?,?,?,?)";
@@ -71,6 +76,13 @@ class Database {
       ];
 
       return this.exec(query, params);
+    }
+
+    getMeals(limit = 5)
+    {
+      let q = "SELECT *, Meals.rowid FROM Meals ORDER BY Meals.rowid DESC LIMIT ?";
+
+      return this.exec(q, [limit]);
     }
 
     dropTables() {

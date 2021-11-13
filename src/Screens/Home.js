@@ -1,24 +1,39 @@
 import React from 'react';
-import {
-    Text,
-    View
-} from 'react-native';
-
-import { Button } from 'react-native-paper';
+import {Text, View, SafeAreaView, ScrollView} from 'react-native';
+import { Button, IconButton, Card } from 'react-native-paper';
 import Section from '../Components/Section';
+import {colors, styles} from '../Styles';
 
-const HomeScreen = ({ navigation }) => {  
+class HomeScreen extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Section title="Hello world, home screen">
-          <Text>Example simple text</Text>
-        </Section>
-        {/* <Button  mode="contained" onPress={() => navigation.navigate('Profile', { name: 'Jane' })}> 
-          Go to Jane's profile
-        </Button>        
-        <Button onPress={() => navigation.navigate('Details')}>Details</Button>    */}
-      </View>
+      <SafeAreaView style={{minHeight: 450}}>
+      <ScrollView style={styles.viewStyle2}>
+
+      </ScrollView>
+
+      <IconButton
+          icon="plus"
+          color={colors.white}
+          style={{
+            backgroundColor:colors.purple,
+            position: "absolute",
+            bottom: 10,
+            right: 10,
+            alignSelf: 'flex-end'
+          }}
+          size={35}
+          onPress={() => this.props.navigation.navigate('AddMeal')}
+      />
+
+      </SafeAreaView>
     );
-};
+  }
+}
 
 export default HomeScreen;
