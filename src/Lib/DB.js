@@ -22,14 +22,74 @@ class Database {
     }
 
     init() {
-        return this.exec(
-            "CREATE TABLE IF NOT EXISTS Products(name VARCHAR(255), calories FLOAT, carbs FLOAT, fats FLOAT, protein FLOAT, description TEXT, photo TEXT)"
-        );
+
+      let mealsTable = "CREATE TABLE IF NOT EXISTS Meals(" +
+        "products TEXT," +
+        "calories  DECIMAL(10,5),"+
+        "carbs  DECIMAL(10,5)," +
+        "sugar  DECIMAL(10,5),"+
+        "fats  DECIMAL(10,5),"+
+        "protein  DECIMAL(10,5)," +
+        "date TEXT" +
+      ");";
+
+      let productsTable = "CREATE TABLE IF NOT EXISTS Products("+
+        "name VARCHAR(255),"+
+        "calories  DECIMAL(10,5),"+
+        "carbs  DECIMAL(10,5),"+
+        "sugar  DECIMAL(10,5),"+
+        "fats  DECIMAL(10,5),"+
+        "protein  DECIMAL(10,5),"+
+        "description TEXT, photo TEXT"+
+      ");";
+
+      return this.exec(mealsTable+productsTable);
+
     }
+
 
     getProducts()
     {
-        return this.exec("SELECT *, Products.rowid FROM Products");
+      return this.exec("SELECT *, Products.rowid FROM Products ORDER BY Products.rowid DESC");
+    }
+
+    getProduct(productId) {
+      return this.exec("SELECT *, Products.rowid FROM products WHERE Products.rowid = ?", [productId]);
+    }
+
+    saveProduct(product)
+    {
+      let query = "INSERT INTO Products (name, calories, carbs, sugar, fats, protein) VALUES (?,?,?,?,?,?)";
+
+      let params = [
+        product.name,
+        product.calories,
+        product.carbs,
+        product.sugar,
+        product.fats,
+        product.protein
+      ];
+
+      return this.exec(query, params);
+    }
+
+    dropTables() {
+      return this.exec(
+        "DROP TABLE IF EXISTS Products;" +
+        "DROP TABLE IF EXISTS Meals;"
+      )
+    }
+
+    insertTestData()
+    {
+      let sql = "INSERT INTO Products (name, calories, carbs, sugar, fats, protein) VALUES (?,?,?,?,?,?),(?,?,?,?,?,?),(?,?,?,?,?,?)";
+      let params = [
+        'Bananas 1', 89, 23, 12, 0.3, 1.1,
+        'Bananas T1', 100, 20, 10, 0.3, 1.2,
+        'Bananas T2', 110, 30, 20, 0.5, 1.5,
+      ];
+
+      return this.exec(sql, params);
     }
 }
 

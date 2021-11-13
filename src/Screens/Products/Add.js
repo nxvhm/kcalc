@@ -4,6 +4,8 @@ import { SafeAreaView, ScrollView, View} from 'react-native';
 import { TextInput, Button, HelperText } from 'react-native-paper';
 import {styles, colors} from '../../Styles';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DB from "../../Lib/DB";
+import { showMessage } from "react-native-flash-message";
 
 class AddProduct extends Component {
     constructor()
@@ -41,6 +43,26 @@ class AddProduct extends Component {
 
       if (0 === Object.keys(errors).length) {
         console.log('save product:', product);
+
+        DB.saveProduct(product).then(res => {
+          let msg = {
+            message: "Product saved",
+            description: "Product was successfully saved in database",
+            type: "success",
+          };
+          console.log('inserted id', res.insertId);
+          this.props.navigation.navigate('ProductsList', {
+            message: msg,
+            productId: res.insertId
+          });
+        }).catch(err => {
+          showMessage({
+            message: "Error occured",
+            description: err.message,
+            type: "error",
+          });
+        })
+
       }
 
     }
@@ -58,8 +80,8 @@ class AddProduct extends Component {
 
       } else {
 
-        if (!value) {
-          errors[field] = `Enter amount of ${field}.If none, then enter 0`;
+        if (!value || isNaN(value)) {
+          errors[field] = `Enter numeric amount of ${field}. If none, then enter 0`;
         } else {
           delete errors[field];
         }
