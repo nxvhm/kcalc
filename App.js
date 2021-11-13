@@ -16,11 +16,12 @@ import DB from './src/Lib/DB';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 import {BottomStackNavigator } from './src/Navigation/StackNavigator';
+import FlashMessage from "react-native-flash-message";
+
 
 DB.init().then(res => {
   console.log('SUCCESS DB INIT', res);
-})
-.catch(err => {
+}).catch(err => {
   console.log("Error during db init", err);
 });
 
@@ -34,7 +35,9 @@ const App = () => {
   return (
       <NavigationContainer>
         <BottomStackNavigator></BottomStackNavigator>
+        <FlashMessage position="top" />
       </NavigationContainer>
+
   );
 };
 
