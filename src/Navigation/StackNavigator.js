@@ -17,7 +17,7 @@ const ProductStack = createNativeStackNavigator();
 const HomeStackScreen = () => {
     return (
         <HomeStack.Navigator initialRouteName="HomeScreen">
-            <HomeStack.Screen name="HomeScreen" component={HomeScreen}  options={{ headerTitle: "Home"}} />
+            <HomeStack.Screen name="HomeScreen" component={HomeScreen}  options={{ headerTitle: "Food"}} />
             <HomeStack.Screen name="AddMeal" component={AddMeal} options={{
               headerTitle: "Add Meal"
             }}/>
@@ -41,9 +41,9 @@ const ProductsStackScreen = () => {
 const BottomStackNavigator = () => {
     return (
         <Tab.Navigator barStyle={{ backgroundColor: colors.purple }}>
-            <Tab.Screen name="Home" component={HomeStackScreen} options={{
+            <Tab.Screen name="Food" component={HomeStackScreen} options={{
                 tabBarIcon: ({ color, size }) => (
-                    <Icon name="home-outline" size={25} color="#fff" />
+                    <Icon name="fast-food-outline" size={25} color="#fff" />
                 )
             }}></Tab.Screen>
             <Tab.Screen name="Products" component={ProductsStackScreen} options={{

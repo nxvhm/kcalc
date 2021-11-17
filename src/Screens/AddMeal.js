@@ -1,10 +1,11 @@
 import React from "react";
 
-import { SafeAreaView, ScrollView } from 'react-native';
-import { TextInput, Button, List, Card, Paragraph  } from 'react-native-paper';
+import { SafeAreaView, ScrollView, View } from 'react-native';
+import { TextInput, Button, List, Card, Paragraph, Text } from 'react-native-paper';
 import {styles, colors} from '../Styles';
 import DB from "../Lib/DB";
 import { showMessage } from "react-native-flash-message";
+import Bold from "../Components/Bold";
 
 class AddMeal extends React.Component {
 
@@ -23,6 +24,7 @@ class AddMeal extends React.Component {
       }
     }
   }
+
 
   searchProducts(name) {
 
@@ -164,14 +166,26 @@ class AddMeal extends React.Component {
 
     if (meal.products && meal.products.length) {
       let productsInfo = meal.products.map(product => {
-        return <Paragraph key={'meal-product-data'+product.rowid}>
-          {product.amount} grams of {product.name}/{product.per_amount}kcal
-        </Paragraph>
+        return <List.Item style={{padding: 0}}
+          key={'meal-product-data'+product.rowid}
+          title={product.name}
+          titleStyle={{padding: 0}}
+          description={`${product.amount} grams`}
+          right={props => <Text style={{paddingTop:8}}>{product.per_amount}kcal</Text>}
+        />
+
       })
+
       return <Card mode="outlined" style={{marginTop: 5}}>
         <Card.Title title={`Current meal: ${meal.calories}kcal.`}/>
-        <Card.Content>
+        <Card.Content style={{padding: 0}}>
           {productsInfo}
+          <View style={styles.mealNutritionsOverview}>
+            <Text><Bold>Carbs:</Bold> {meal.carbs ?? 0}</Text>
+            <Text><Bold>Sugar:</Bold> {meal.sugar ?? 0}</Text>
+            <Text><Bold>Fats:</Bold> {meal.fats}</Text>
+            <Text><Bold>Protein:</Bold> {meal.proteins}</Text>
+          </View>
         </Card.Content>
       </Card>
     }
@@ -208,6 +222,8 @@ class AddMeal extends React.Component {
     let suggestions = this.getSuggestionsList(productsResult)
     let selectedProductForm = this.getSelectedItemForm();
     let mealData = this.getMealCard();
+
+    const SaveButton = mealData ? <Button icon="camera" mode="contained">Save</Button> : null;
     return (
       <SafeAreaView style={{minHeight: 450}}>
       <ScrollView style={styles.viewStyle2}>
@@ -220,7 +236,11 @@ class AddMeal extends React.Component {
         {suggestions}
 
         {selectedProductForm}
+
         {mealData}
+
+        {SaveButton}
+
       </ScrollView>
       </SafeAreaView>
     )

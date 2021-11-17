@@ -78,6 +78,12 @@ class Database {
       return this.exec(query, params);
     }
 
+    removeProduct(productId) {
+      let q = "DELETE FROM Products WHERE Products.rowid = ?";
+
+      return this.exec(q, [productId]);
+    }
+
     getMeals(limit = 5)
     {
       let q = "SELECT *, Meals.rowid FROM Meals ORDER BY Meals.rowid DESC LIMIT ?";

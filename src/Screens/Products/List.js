@@ -1,10 +1,11 @@
 import React, {useState, Component} from "react";
 
 import { SafeAreaView, ScrollView } from 'react-native';
-import { IconButton, Card, Paragraph } from 'react-native-paper';
+import { IconButton, Card, Paragraph, Button } from 'react-native-paper';
 import {styles, colors} from '../../Styles';
 import DB from "../../Lib/DB";
 import { showMessage } from "react-native-flash-message";
+import ConfirmationDialog from "../../Components/ConfirmationDialog";
 
 class List extends Component{
 
@@ -12,7 +13,9 @@ class List extends Component{
         super();
         this.state = {
           id: 0,
-          products: []
+          products: [],
+          showDialog: false,
+          productToRemove: false
         }
     }
 
@@ -55,13 +58,48 @@ class List extends Component{
         })
     }
 
+    showDialog(product) {
+      this.setState({showDialog: true, productToRemove: {
+        id: product.rowid,
+        name: product.name
+      }});
+    }
+
+    hideDialog() {
+      this.setState({showDialog: false});
+    }
+
+
+    removeProduct() {
+      let {productToRemove, id} = this.state;
+      console.log("Remove product with id:", productToRemove);
+
+      if (productToRemove && productToRemove.id) {
+        DB.removeProduct(productToRemove.id).then(res => {
+          this.setState({showDialog: false, productToRemove: false});
+          this.loadProducts(id++);
+        }).catch(err => {
+          showMessage({
+            type: 'error',
+            message: 'Error occured',
+            description: err.message
+          })
+        })
+      }
+
+    }
+
     render() {
 
-        const {products, id} = this.state;
+        const {products, id, showDialog, productToRemove} = this.state;
 
         const productsList = products.map(product => {
-            return <Card key={'product-'+product.rowid} mode="outlined" style={styles.productCard}>
-                <Card.Title title={product.name}></Card.Title>
+            return <Card key={'product-'+product.rowid} style={styles.productCard}>
+                <Card.Title
+                  title={product.name}
+                  titleStyle={{color: colors.white}}
+                  style={{backgroundColor:colors.purple, borderTopLeftRadius: 5, borderTopRightRadius: 5}}>
+                </Card.Title>
                 <Card.Content>
                     <Paragraph>Calories per 100 grams: {product.calories}</Paragraph>
                     <Paragraph>Carbohydrates: {product.carbs}</Paragraph>
@@ -69,6 +107,15 @@ class List extends Component{
                     <Paragraph>Fats: {product.fats}</Paragraph>
                     <Paragraph>Proteins: {product.protein}</Paragraph>
                 </Card.Content>
+                <Card.Actions>
+                  <Button mode="outlined"
+                    onPress={() => this.showDialog(product)}
+                    color={colors.red}
+                    style={{borderColor:colors.red, marginLeft: "auto"}}
+                    icon="delete">
+                      Delete
+                  </Button>
+              </Card.Actions>
             </Card>
         })
 
@@ -92,6 +139,14 @@ class List extends Component{
                 size={35}
                 onPress={() => this.props.navigation.navigate('ProductsAdd')}
             />
+
+            <ConfirmationDialog
+              text={`Are you sure you want to delete product: ${productToRemove.name} ?`}
+              visible={showDialog}
+              onDismiss={() => this.hideDialog()}
+              onConfirm={() => this.removeProduct()}>
+            </ConfirmationDialog>
+
 
         </SafeAreaView>
         )

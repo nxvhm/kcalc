@@ -3,7 +3,7 @@ import {StyleSheet} from 'react-native';
 
 const colors = {
   purple: '#673AB7',
-  blue: '#1976D2',
+  blue: 'blue',
   red: '#F44336',
   green: '#4CAF50',
   white: '#FFFFFF'
@@ -29,7 +29,12 @@ const styles = StyleSheet.create({
 
     productCard: {
       marginBottom: 5,
-      marginTop: 5
+      marginTop: 5,
+      borderStyle: 'solid',
+      borderWidth: 1,
+      borderColor: colors.purple,
+      borderTopLeftRadius: 5,
+      borderTopRightRadius: 5
     },
 
     viewStyle: {
@@ -45,6 +50,13 @@ const styles = StyleSheet.create({
       backgroundColor: colors.purple,
       marginBottom: 30,
       marginTop: 15
+    },
+
+    mealNutritionsOverview: {
+      flexDirection: 'row',
+      flexGrow: 4,
+      justifyContent: 'space-between',
+      marginTop: 3
     }
 });
 export {styles}
