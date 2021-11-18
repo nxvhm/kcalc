@@ -1,11 +1,12 @@
 import React, {useState, Component} from "react";
 
-import { SafeAreaView, ScrollView } from 'react-native';
-import { IconButton, Card, Paragraph, Button } from 'react-native-paper';
+import { SafeAreaView, ScrollView, View } from 'react-native';
+import { IconButton, Card, Paragraph, Button, Text } from 'react-native-paper';
 import {styles, colors} from '../../Styles';
 import DB from "../../Lib/DB";
 import { showMessage } from "react-native-flash-message";
 import ConfirmationDialog from "../../Components/ConfirmationDialog";
+import Bold from "../../Components/Bold";
 
 class List extends Component{
 
@@ -96,18 +97,19 @@ class List extends Component{
         const productsList = products.map(product => {
             return <Card key={'product-'+product.rowid} style={styles.productCard}>
                 <Card.Title
-                  title={product.name}
+                  title={`${product.name} ${product.calories}kcal/100gr`}
                   titleStyle={{color: colors.white}}
                   style={{backgroundColor:colors.purple, borderTopLeftRadius: 5, borderTopRightRadius: 5}}>
                 </Card.Title>
                 <Card.Content>
-                    <Paragraph>Calories per 100 grams: {product.calories}</Paragraph>
-                    <Paragraph>Carbohydrates: {product.carbs}</Paragraph>
-                    <Paragraph>Sugars: {product.sugar}</Paragraph>
-                    <Paragraph>Fats: {product.fats}</Paragraph>
-                    <Paragraph>Proteins: {product.protein}</Paragraph>
+                  <View style={styles.mealNutritionsOverview}>
+                    <Text><Bold>Carbs:</Bold> {product.carbs ?? 0}</Text>
+                    <Text><Bold>Sugar:</Bold> {product.sugar ?? 0}</Text>
+                    <Text><Bold>Fats:</Bold> {product.fats}</Text>
+                    <Text><Bold>Protein:</Bold> {product.protein}</Text>
+                  </View>
                 </Card.Content>
-                <Card.Actions>
+                <Card.Actions style={{alignSelf: 'center'}}>
                   <Button mode="outlined"
                     onPress={() => this.showDialog(product)}
                     color={colors.red}

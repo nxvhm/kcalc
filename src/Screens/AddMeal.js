@@ -6,6 +6,9 @@ import {styles, colors} from '../Styles';
 import DB from "../Lib/DB";
 import { showMessage } from "react-native-flash-message";
 import Bold from "../Components/Bold";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from "moment";
+import Dates from "../Lib/Dates";
 
 class AddMeal extends React.Component {
 
@@ -14,13 +17,15 @@ class AddMeal extends React.Component {
     this.state = {
       productsResult: [],
       selectedProduct: null,
+      showDatepicker: false,
       meal: {
         fats: 0,
         carbs: 0,
-        sugars: 0,
-        proteins: 0,
+        sugar: 0,
+        protein: 0,
         calories: 0,
         products: [],
+        date: moment(Date.now()).format('D/M/yyyy')
       }
     }
   }
@@ -47,7 +52,6 @@ class AddMeal extends React.Component {
       this.setState({productsResult});
 
     }).catch(err => {
-      console.log(err);
       showMessage({
         type: 'error',
         message: "Error occured",
@@ -131,26 +135,16 @@ class AddMeal extends React.Component {
     // Calculate meal nutritions
     meal.calories += selectedProduct.per_amount;
 
-    meal.carbs += Math.round(
-      ((selectedProduct.amount/100)*selectedProduct.carbs)*100
-    )/100;
-
-    meal.sugars += Math.round(
-      ((selectedProduct.amount/100)*selectedProduct.sugar)*100
-    )/100;
-
-    meal.fats += Math.round(
-      ((selectedProduct.amount/100)*selectedProduct.fats)*100
-    )/100;
-
-    meal.proteins += Math.round(
-      ((selectedProduct.amount/100)*selectedProduct.protein)*100
-    )/100;
+    ['carbs', 'sugar', 'fats', 'protein'].forEach(nutrition => {
+      meal[nutrition] += Math.round(
+        (((selectedProduct.amount/100)*selectedProduct[nutrition])*100)/100
+      );
+    });
 
     // Remove selected product
     selectedProduct = null;
 
-    console.log(meal);
+    // console.log(meal);
 
     this.setState({meal, selectedProduct});
   }
@@ -159,6 +153,24 @@ class AddMeal extends React.Component {
     let {selectedProduct} = this.state;
     selectedProduct = null;
     this.setState({selectedProduct});
+  }
+
+  onDateChange(event, date) {
+    if (event.type == 'dismissed') {
+      this.setState({showDatepicker: false});
+
+    } else if (event.type == 'set') {
+
+      let {meal} = this.state;
+      meal.date = moment(date).format('D/M/yyyy');
+      this.setState({meal, showDatepicker: false});
+    }
+
+  }
+
+  toggleDatePicker() {
+    let {showDatepicker} = this.state;
+    this.setState({showDatepicker: !showDatepicker});
   }
 
   getMealCard() {
@@ -183,9 +195,12 @@ class AddMeal extends React.Component {
           <View style={styles.mealNutritionsOverview}>
             <Text><Bold>Carbs:</Bold> {meal.carbs ?? 0}</Text>
             <Text><Bold>Sugar:</Bold> {meal.sugar ?? 0}</Text>
-            <Text><Bold>Fats:</Bold> {meal.fats}</Text>
-            <Text><Bold>Protein:</Bold> {meal.proteins}</Text>
+            <Text><Bold>Fats:</Bold> {meal.fats ?? 0}</Text>
+            <Text><Bold>Protein:</Bold> {meal.protein ?? 0}</Text>
           </View>
+          <Button mode="text" onPress={() => this.toggleDatePicker()}>
+            {meal.date}
+          </Button>
         </Card.Content>
       </Card>
     }
@@ -217,13 +232,13 @@ class AddMeal extends React.Component {
   }
 
   render() {
-    const {productsResult} = this.state;
+    const {productsResult, showDatepicker} = this.state;
 
     let suggestions = this.getSuggestionsList(productsResult)
     let selectedProductForm = this.getSelectedItemForm();
     let mealData = this.getMealCard();
 
-    const SaveButton = mealData ? <Button icon="camera" mode="contained">Save</Button> : null;
+    const SaveButton = mealData ? <Button icon="content-save-outline" mode="contained">Save</Button> : null;
     return (
       <SafeAreaView style={{minHeight: 450}}>
       <ScrollView style={styles.viewStyle2}>
@@ -240,6 +255,14 @@ class AddMeal extends React.Component {
         {mealData}
 
         {SaveButton}
+
+        {showDatepicker && <DateTimePicker
+          testID="dateTimePicker"
+          value={new Date()}
+          is24Hour={true}
+          display="calendar"
+          onChange={(event, date) => this.onDateChange(event, date)}
+        />}
 
       </ScrollView>
       </SafeAreaView>
