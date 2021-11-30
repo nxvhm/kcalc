@@ -30,7 +30,7 @@ class Database {
         "sugar  DECIMAL(10,5),"+
         "fats  DECIMAL(10,5),"+
         "protein  DECIMAL(10,5)," +
-        "date TEXT" +
+        "date NUMBER" +
       ");";
 
       let productsTable = "CREATE TABLE IF NOT EXISTS Products("+
@@ -84,16 +84,31 @@ class Database {
       return this.exec(q, [productId]);
     }
 
-    getMeals(limit = 5)
-    {
+    getMeals(limit = 5) {
       let q = "SELECT *, Meals.rowid FROM Meals ORDER BY Meals.rowid DESC LIMIT ?";
 
       return this.exec(q, [limit]);
     }
 
+    saveMeal(meal) {
+      let q = "INSERT INTO Meals (products, calories, carbs, sugar, fats, protein, date) VALUES (?,?,?,?,?,?,?)";
+
+      let data = [
+        JSON.stringify(meal.products),
+        meal.calories,
+        meal.carbs,
+        meal.sugar,
+        meal.fats,
+        meal.protein,
+        meal.date
+      ];
+
+      return this.exec(q, data);
+    }
+
     dropTables() {
       return this.exec(
-        "DROP TABLE IF EXISTS Products;" +
+        // "DROP TABLE IF EXISTS Products;" +
         "DROP TABLE IF EXISTS Meals;"
       )
     }

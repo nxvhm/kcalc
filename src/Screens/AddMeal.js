@@ -5,10 +5,11 @@ import { TextInput, Button, List, Card, Paragraph, Text } from 'react-native-pap
 import {styles, colors} from '../Styles';
 import DB from "../Lib/DB";
 import { showMessage } from "react-native-flash-message";
-import Bold from "../Components/Bold";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from "moment";
-import Dates from "../Lib/Dates";
+import Format from "../Lib/Format";
+import MealCard from "../Components/MealCard";
+import SelectedFoodForm from "../Components/SelectedFoodForm";
 
 class AddMeal extends React.Component {
 
@@ -18,18 +19,21 @@ class AddMeal extends React.Component {
       productsResult: [],
       selectedProduct: null,
       showDatepicker: false,
-      meal: {
-        fats: 0,
-        carbs: 0,
-        sugar: 0,
-        protein: 0,
-        calories: 0,
-        products: [],
-        date: moment(Date.now()).format('D/M/yyyy')
-      }
+      meal: this.getMealDataStruct()
     }
   }
 
+  getMealDataStruct() {
+    return {
+      fats: 0,
+      carbs: 0,
+      sugar: 0,
+      protein: 0,
+      calories: 0,
+      products: [],
+      date: moment(Date.now()).format('D/M/yyyy')
+    }
+  }
 
   searchProducts(name) {
 
@@ -136,15 +140,13 @@ class AddMeal extends React.Component {
     meal.calories += selectedProduct.per_amount;
 
     ['carbs', 'sugar', 'fats', 'protein'].forEach(nutrition => {
-      meal[nutrition] += Math.round(
-        (((selectedProduct.amount/100)*selectedProduct[nutrition])*100)/100
+      meal[nutrition] += Format.decimalAdjust('round',
+        ((selectedProduct.amount/100)*selectedProduct[nutrition]), -1
       );
     });
 
     // Remove selected product
     selectedProduct = null;
-
-    // console.log(meal);
 
     this.setState({meal, selectedProduct});
   }
@@ -168,67 +170,71 @@ class AddMeal extends React.Component {
 
   }
 
+  /**
+   * Show/Hide date picker
+   */
   toggleDatePicker() {
     let {showDatepicker} = this.state;
     this.setState({showDatepicker: !showDatepicker});
   }
 
+  /**
+   * Component to display current meal data (products, amounts, macros)
+   */
   getMealCard() {
     const {meal} = this.state;
-
     if (meal.products && meal.products.length) {
-      let productsInfo = meal.products.map(product => {
-        return <List.Item style={{padding: 0}}
-          key={'meal-product-data'+product.rowid}
-          title={product.name}
-          titleStyle={{padding: 0}}
-          description={`${product.amount} grams`}
-          right={props => <Text style={{paddingTop:8}}>{product.per_amount}kcal</Text>}
-        />
 
-      })
-
-      return <Card mode="outlined" style={{marginTop: 5}}>
-        <Card.Title title={`Current meal: ${meal.calories}kcal.`}/>
-        <Card.Content style={{padding: 0}}>
-          {productsInfo}
-          <View style={styles.mealNutritionsOverview}>
-            <Text><Bold>Carbs:</Bold> {meal.carbs ?? 0}</Text>
-            <Text><Bold>Sugar:</Bold> {meal.sugar ?? 0}</Text>
-            <Text><Bold>Fats:</Bold> {meal.fats ?? 0}</Text>
-            <Text><Bold>Protein:</Bold> {meal.protein ?? 0}</Text>
-          </View>
-          <Button mode="text" onPress={() => this.toggleDatePicker()}>
-            {meal.date}
-          </Button>
-        </Card.Content>
-      </Card>
+      return <MealCard
+        meal={meal}
+        toggleDatePicker={() => this.toggleDatePicker()}>
+      </MealCard>
     }
 
     return null;
   }
-
+  /**
+   * Component to display form to enter desired food amount
+   */
   getSelectedItemForm() {
     const {selectedProduct } = this.state;
 
     if (!selectedProduct) return false;
+    return <SelectedFoodForm
+      selectedProduct={selectedProduct}
+      setSelectedProductAmount={amount => this.setSelectedProductAmount(amount)}
+      discardSelectedProduct={() => this.discardSelectedProduct()}
+      addToMeal={product => this.addToMeal(product)}
+    />
 
-    return <Card mode="outlined" style={{marginTop: 5}}>
-      <Card.Title title={`${selectedProduct.name}: 100g/${selectedProduct.calories} kcal`}></Card.Title>
-      <Card.Content>
-          {this.caloriesPerAmountParagraph(selectedProduct)}
-          <TextInput style={{ backgroundColor: null, paddingHorizontal: 0}}
-            label={`Amount of ${selectedProduct.name} in grams`}
-            value={selectedProduct.amount}
-            keyboardType="numeric"
-            onChangeText={value => this.setSelectedProductAmount(value)}
-          />
-      </Card.Content>
-      <Card.Actions>
-        <Button onPress={() => {this.discardSelectedProduct()}}>Discard</Button>
-        <Button onPress={() => {this.addToMeal(selectedProduct)}}>Add to meal</Button>
-      </Card.Actions>
-    </Card>
+  }
+  /**
+   * Save meal in db
+   */
+  saveMeal() {
+    let {meal} = this.state;
+    meal.date = moment(meal.date, 'D/M/yyyy').valueOf();
+    DB.saveMeal(meal).then(res => {
+      let msg = {
+        type: 'success',
+        message: 'Meal saved',
+        description: 'Meal is saved, check homepage for details'
+      }
+
+      this.setState({meal: this.getMealDataStruct()});
+
+      this.props.navigation.navigate('HomeScreen', {
+        message: msg,
+        id: new Date().valueOf()
+      });
+
+    }).catch(err => {
+      showMessage({
+        type: 'error',
+        message: 'Error occured',
+        description: err.message
+      })
+    })
   }
 
   render() {
@@ -238,7 +244,7 @@ class AddMeal extends React.Component {
     let selectedProductForm = this.getSelectedItemForm();
     let mealData = this.getMealCard();
 
-    const SaveButton = mealData ? <Button icon="content-save-outline" mode="contained">Save</Button> : null;
+    const SaveButton = mealData ? <Button icon="content-save-outline" mode="contained" onPress={() => this.saveMeal()}>Save</Button> : null;
     return (
       <SafeAreaView style={{minHeight: 450}}>
       <ScrollView style={styles.viewStyle2}>
