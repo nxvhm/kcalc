@@ -6,6 +6,8 @@ import DB from '../Lib/DB';
 import { showMessage } from "react-native-flash-message";
 import moment from "moment";
 import MealOverview from '../Components/MealOverview';
+moment.suppressDeprecationWarnings = true;
+
 class HomeScreen extends React.Component {
 
   constructor(props) {
@@ -49,10 +51,9 @@ class HomeScreen extends React.Component {
 
       for (let index = 0; index < res.rows.length; index++) {
         let meal = res.rows.item(index);
-        meal.date = moment(meal.date).format('D/M/yyyy');
+        meal.date = moment(meal.date, 'x').format('D/M/yyyy');
         meal.products = JSON.parse(meal.products);
         meals.push(meal);
-        console.log(meal);
       }
 
       this.setState({id, meals});
