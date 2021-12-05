@@ -5,7 +5,7 @@ import {colors, styles} from '../Styles';
 import DB from '../Lib/DB';
 import { showMessage } from "react-native-flash-message";
 import moment from "moment";
-
+import MealOverview from '../Components/MealOverview';
 class HomeScreen extends React.Component {
 
   constructor(props) {
@@ -52,6 +52,7 @@ class HomeScreen extends React.Component {
         meal.date = moment(meal.date).format('D/M/yyyy');
         meal.products = JSON.parse(meal.products);
         meals.push(meal);
+        console.log(meal);
       }
 
       this.setState({id, meals});
@@ -66,13 +67,20 @@ class HomeScreen extends React.Component {
 
   }
 
+  getMealsOverview() {
+    const {meals} = this.state;
+    return meals.map(meal => {
+      return <MealOverview meal={meal} key={'meal-'+meal.rowid}></MealOverview>
+    })
+  }
+
   render() {
-    const {meals, id} = this.state;
-    console.log(meals);
+    const {id} = this.state;
+    const mealsOverview = this.getMealsOverview()
     return (
       <SafeAreaView style={{minHeight: 450}} key={id}>
       <ScrollView style={styles.viewStyle2}>
-
+        {mealsOverview}
       </ScrollView>
 
       <IconButton
