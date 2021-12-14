@@ -138,11 +138,11 @@ class AddMeal extends React.Component {
 
     // Calculate meal nutritions
     meal.calories += selectedProduct.per_amount;
+    meal.calories = Format.decimalAdjust('round', meal.calories, -1);
 
     ['carbs', 'sugar', 'fats', 'protein'].forEach(nutrition => {
-      meal[nutrition] += Format.decimalAdjust('round',
-        ((selectedProduct.amount/100)*selectedProduct[nutrition]), -1
-      );
+      meal[nutrition] += ((selectedProduct.amount/100)*selectedProduct[nutrition]);
+      meal[nutrition] = Format.decimalAdjust('round', meal[nutrition], -1);
     });
 
     // Remove selected product

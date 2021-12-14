@@ -21,18 +21,7 @@ class Database {
         })
     }
 
-    init() {
-
-      let mealsTable = "CREATE TABLE IF NOT EXISTS Meals(" +
-        "products TEXT," +
-        "calories  DECIMAL(10,5),"+
-        "carbs  DECIMAL(10,5)," +
-        "sugar  DECIMAL(10,5),"+
-        "fats  DECIMAL(10,5),"+
-        "protein  DECIMAL(10,5)," +
-        "date NUMBER" +
-      ");";
-
+    createdProductsTable() {
       let productsTable = "CREATE TABLE IF NOT EXISTS Products("+
         "name VARCHAR(255),"+
         "calories  DECIMAL(10,5),"+
@@ -43,8 +32,22 @@ class Database {
         "description TEXT, photo TEXT"+
       ");";
 
-      return this.exec(mealsTable+productsTable);
+      return this.exec(productsTable);
 
+    }
+
+    createMealsTable() {
+      let mealsTable = "CREATE TABLE IF NOT EXISTS Meals(" +
+        "products TEXT," +
+        "calories  DECIMAL(10,5),"+
+        "carbs  DECIMAL(10,5)," +
+        "sugar  DECIMAL(10,5),"+
+        "fats  DECIMAL(10,5),"+
+        "protein  DECIMAL(10,5)," +
+        "date NUMBER" +
+      ");";
+
+      return this.exec(mealsTable);
     }
 
 
@@ -104,6 +107,12 @@ class Database {
       ];
 
       return this.exec(q, data);
+    }
+
+    removeMeal(id) {
+      let q = "DELETE FROM Meals WHERE Meals.rowid = ?";
+
+      return this.exec(q, [id]);
     }
 
     dropTables() {

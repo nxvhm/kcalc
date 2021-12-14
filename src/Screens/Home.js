@@ -6,6 +6,8 @@ import DB from '../Lib/DB';
 import { showMessage } from "react-native-flash-message";
 import moment from "moment";
 import MealOverview from '../Components/MealOverview';
+import Format from '../Lib/Format';
+
 moment.suppressDeprecationWarnings = true;
 
 class HomeScreen extends React.Component {
@@ -27,6 +29,7 @@ class HomeScreen extends React.Component {
       id = params.id;
 
       this.getMeals(id);
+      this.props.route.params = {};
 
       if (params.message) {
         showMessage(params.message);
@@ -43,10 +46,6 @@ class HomeScreen extends React.Component {
     id = updatedId;
 
     DB.getMeals().then(res => {
-      if (!res.rows || !res.rows.length) {
-        return false;
-      }
-
       let meals = [];
 
       for (let index = 0; index < res.rows.length; index++) {
@@ -68,10 +67,30 @@ class HomeScreen extends React.Component {
 
   }
 
+  removeMeal(mealId) {
+    DB.removeMeal(mealId).then(res => {
+
+      showMessage({
+        type: 'success',
+        message: 'Meal deleted',
+      });
+
+      this.getMeals(Format.randomKey());
+
+    }).catch(err => {
+      showMessage({
+        type: 'error',
+        message: 'Error occured',
+        description: err.message
+      })
+    })
+
+  }
+
   getMealsOverview() {
     const {meals} = this.state;
     return meals.map(meal => {
-      return <MealOverview meal={meal} key={'meal-'+meal.rowid}></MealOverview>
+      return <MealOverview meal={meal} key={'meal-'+meal.rowid} removeMeal={mealId => this.removeMeal(mealId)}></MealOverview>
     })
   }
 

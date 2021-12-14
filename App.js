@@ -20,9 +20,11 @@ import FlashMessage from "react-native-flash-message";
 
 // DB.dropTables();
 
-DB.init().then(res => {
-  console.log('SUCCESS DB INIT', res);
-  // DB.insertTestData();
+DB.createdProductsTable().then(res => {
+  console.log('Products table available in db');
+  return DB.createMealsTable();
+}).then(res => {
+  console.log('Meals Table available in db');
 }).catch(err => {
   console.log("Error during db init", err);
 });

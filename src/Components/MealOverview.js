@@ -32,6 +32,10 @@ const MealOverview = (props) => {
             {props.meal.date}
           </Button>
         </Card.Content>
+        <Card.Actions>
+          <Button icon="clipboard-text-outline" style={{flex: 1}}>Details</Button>
+          <Button icon="trash-can-outline" onPress={() => props.removeMeal(props.meal.rowid)} style={{ flex: 2}}>Remove</Button>
+        </Card.Actions>
     </Card>
   )
 }
