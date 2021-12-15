@@ -7,6 +7,8 @@ import DB from "../../Lib/DB";
 import { showMessage } from "react-native-flash-message";
 import ConfirmationDialog from "../../Components/ConfirmationDialog";
 import Bold from "../../Components/Bold";
+import { FAB, ActivityIndicator, Colors } from 'react-native-paper';
+import Format from "../../Lib/Format";
 
 class List extends Component{
 
@@ -16,7 +18,8 @@ class List extends Component{
           id: 0,
           products: [],
           showDialog: false,
-          productToRemove: false
+          productToRemove: false,
+          loading: true
         }
     }
 
@@ -52,11 +55,37 @@ class List extends Component{
                 products.push(res.rows.item(index));
             }
 
-            this.setState({id, products})
+            this.setState({id, products, loading: false})
           }
         }).catch(err => {
           console.log('error during products fetch', err);
         })
+    }
+
+    loadMore() {
+      let {products} = this.state;
+      if (!products.length)
+        return;
+
+      this.setState({loading: true});
+
+      let lastId = products[products.length - 1].rowid;
+
+      DB.getProducts(5, lastId).then(res => {
+        if (!res.rows || !res.rows.length ) {
+          this.setState({loading: false});
+          return false;
+        }
+
+        for (let index = 0; index < res.rows.length; index++) {
+          products.push(res.rows.item(index));
+        }
+
+        this.setState({products, loading: false})
+
+      }).catch(err => {
+        showMessage({type: 'danger', message: 'Error occured', description: err.message})
+      })
     }
 
     showDialog(product) {
@@ -92,10 +121,10 @@ class List extends Component{
 
     render() {
 
-        const {products, id, showDialog, productToRemove} = this.state;
+        const {products, id, showDialog, productToRemove, loading} = this.state;
 
         const productsList = products.map(product => {
-            return <Card key={'product-'+product.rowid} style={styles.productCard}>
+            return <Card key={'product-'+product.rowid+Format.randomKey()} style={styles.productCard}>
                 <Card.Title
                   title={`${product.name} ${product.calories}kcal/100gr`}
                   titleStyle={{color: colors.white}}
@@ -122,24 +151,40 @@ class List extends Component{
         })
 
         return (
-        <SafeAreaView id={id} style={{minHeight: 450}}>
-
+        <SafeAreaView id={id} style={styles.fullViewStyle}>
+            {loading &&
+              <View style={styles.loading}>
+                <ActivityIndicator animating={true} size={'large'} color={Colors.purple800} />
+              </View>
+            }
             <ScrollView style={styles.viewStyle}>
                 {productsList}
             </ScrollView>
 
-            <IconButton
+            <FAB
                 icon="plus"
-                color={colors.white}
                 style={{
-                    backgroundColor:colors.purple,
-                    position: "absolute",
-                    bottom: 10,
-                    right: 10,
-                    alignSelf: 'flex-end'
+                  backgroundColor: Colors.purple900,
+                  position: "absolute",
+                  bottom: 0,
+                  right: 0,
+                  margin: 16
                 }}
-                size={35}
+                small
                 onPress={() => this.props.navigation.navigate('ProductsAdd')}
+            />
+
+            <FAB
+              style={{
+                position: 'absolute',
+                margin: 16,
+                left: 0,
+                bottom: 0,
+                backgroundColor: Colors.purple900
+              }}
+              icon='cart-plus'
+              label='Load more'
+              onPress={() => this.loadMore()}
             />
 
             <ConfirmationDialog

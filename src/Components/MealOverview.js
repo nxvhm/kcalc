@@ -18,7 +18,7 @@ const MealOverview = (props) => {
   })
 
   return (
-    <Card mode="outlined" style={{marginTop: 5}}>
+    <Card mode="outlined" style={{marginTop: 5, marginBottom: 10}}>
       <Card.Title title={`${props.meal.calories}kcal.`}/>
         <Card.Content style={{padding: 0}}>
           {productsInfo}

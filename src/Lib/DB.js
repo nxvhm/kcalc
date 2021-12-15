@@ -51,9 +51,17 @@ class Database {
     }
 
 
-    getProducts()
+    getProducts(limit = 5, id = false)
     {
-      return this.exec("SELECT *, Products.rowid FROM Products ORDER BY Products.rowid DESC");
+      let idQuery = id ? "WHERE Products.rowid < ? " : '';
+
+      let q = "SELECT *, Products.rowid FROM Products "
+          + idQuery
+          + "ORDER BY Products.rowid DESC "
+          + "LIMIT ?"
+      let params = id ? [id, limit] : [limit];
+
+      return this.exec(q, params);
     }
 
     getProduct(productId) {

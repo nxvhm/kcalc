@@ -48,7 +48,7 @@ const BottomStackNavigator = () => {
             }}></Tab.Screen>
             <Tab.Screen name="Products" component={ProductsStackScreen} options={{
                 tabBarIcon: ({ color, size }) => (
-                    <Icon name="list-outline" size={25} color="#fff" />
+                    <Icon name="cart-outline" size={25} color="#fff" />
                 )
             }}></Tab.Screen>
             <Tab.Screen name="Statistics" component={Statistics} options={{

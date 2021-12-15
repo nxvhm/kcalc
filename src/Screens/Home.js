@@ -1,12 +1,12 @@
 import React from 'react';
-import {Text, View, SafeAreaView, ScrollView} from 'react-native';
-import { Button, IconButton, Card } from 'react-native-paper';
+import {SafeAreaView, ScrollView, View} from 'react-native';
 import {colors, styles} from '../Styles';
 import DB from '../Lib/DB';
 import { showMessage } from "react-native-flash-message";
 import moment from "moment";
 import MealOverview from '../Components/MealOverview';
 import Format from '../Lib/Format';
+import { FAB,  ActivityIndicator, Colors } from 'react-native-paper';
 
 moment.suppressDeprecationWarnings = true;
 
@@ -18,13 +18,13 @@ class HomeScreen extends React.Component {
     this.state = {
       id: 0,
       meals: [],
+      loading: true
     }
   }
 
   componentDidUpdate() {
     const {params} = this.props.route;
     let {id} = this.state;
-
     if (params && params.id && id != params.id) {
       id = params.id;
 
@@ -44,6 +44,7 @@ class HomeScreen extends React.Component {
   getMeals(updatedId = 0) {
     let {id} = this.state;
     id = updatedId;
+    this.setState({loading: true});
 
     DB.getMeals().then(res => {
       let meals = [];
@@ -55,7 +56,7 @@ class HomeScreen extends React.Component {
         meals.push(meal);
       }
 
-      this.setState({id, meals});
+      this.setState({id, meals, loading: false});
 
     }).catch(err => {
       showMessage({
@@ -95,40 +96,44 @@ class HomeScreen extends React.Component {
   }
 
   render() {
-    const {id} = this.state;
+    const {id, loading} = this.state;
     const mealsOverview = this.getMealsOverview()
     return (
-      <SafeAreaView style={{minHeight: 450}} key={id}>
+      <SafeAreaView style={styles.fullViewStyle} key={id}>
+        {loading &&
+          <View style={styles.loading}>
+            <ActivityIndicator animating={true} size={'large'} color={Colors.purple800} />
+          </View>
+        }
       <ScrollView style={styles.viewStyle2}>
         {mealsOverview}
       </ScrollView>
-
-      <IconButton
-          icon="reload"
-          color={colors.white}
-          style={{
-            backgroundColor:colors.purple,
-            position: "absolute",
-            bottom: 10,
-            left: 10,
-            alignSelf: 'flex-start'
-          }}
-          size={35}
-          onPress={() => this.props.navigation.navigate('AddMeal')}
+      <FAB
+        style={{
+          position: 'absolute',
+          margin: 16,
+          left: 0,
+          bottom: 0,
+          backgroundColor:colors.purple,
+          color: '#fff'
+        }}
+        small
+        icon="reload"
+        onPress={() => console.log('Pressed')}
       />
 
-      <IconButton
-          icon="plus"
-          color={colors.white}
-          style={{
-            backgroundColor:colors.purple,
-            position: "absolute",
-            bottom: 10,
-            right: 10,
-            alignSelf: 'flex-end'
-          }}
-          size={35}
-          onPress={() => this.props.navigation.navigate('AddMeal')}
+      <FAB
+        style={{
+          position: 'absolute',
+          margin: 16,
+          right: 0,
+          bottom: 0,
+          backgroundColor:colors.purple,
+          color: colors.white
+        }}
+        small
+        icon="plus"
+        onPress={() => this.props.navigation.navigate('AddMeal')}
       />
 
       </SafeAreaView>

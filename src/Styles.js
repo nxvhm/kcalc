@@ -46,6 +46,14 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
     },
 
+    fullViewStyle: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      right: 0,
+      left: 0,
+    },
+
     bottomBtn: {
       backgroundColor: colors.purple,
       marginBottom: 30,
@@ -57,6 +65,18 @@ const styles = StyleSheet.create({
       flexGrow: 4,
       justifyContent: 'space-between',
       marginTop: 3
+    },
+
+    loading: {
+      position: 'absolute',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#rgba(0, 0, 0, 0.5)',
+      zIndex: 1000,
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0
     }
 });
 export {styles}
