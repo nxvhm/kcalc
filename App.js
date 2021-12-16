@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useEffect} from 'react';
 import type {Node} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import {
@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import DB from './src/Lib/DB';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-
+import SplashScreen from 'react-native-splash-screen'
 import {BottomStackNavigator } from './src/Navigation/StackNavigator';
 import FlashMessage from "react-native-flash-message";
 
@@ -30,6 +30,11 @@ DB.createdProductsTable().then(res => {
 });
 
 const App = () => {
+
+  useEffect( () => {
+    SplashScreen.hide();
+  })
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
