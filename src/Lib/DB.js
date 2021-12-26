@@ -123,6 +123,11 @@ class Database {
       return this.exec(q, [id]);
     }
 
+    getMealsForDate(date) {
+      let q = "SELECT *, Meals.rowid FROM Meals WHERE date = ?";
+      return this.exec(q, [date]);
+    }
+
     dropTables() {
       return this.exec(
         // "DROP TABLE IF EXISTS Products;" +

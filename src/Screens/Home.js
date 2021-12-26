@@ -51,7 +51,7 @@ class HomeScreen extends React.Component {
 
       for (let index = 0; index < res.rows.length; index++) {
         let meal = res.rows.item(index);
-        meal.date = moment(meal.date, 'x').format('D/M/yyyy');
+        meal.formatDate = moment(meal.date, 'x').format('D/M/yyyy');
         meal.products = JSON.parse(meal.products);
         meals.push(meal);
       }
@@ -91,8 +91,17 @@ class HomeScreen extends React.Component {
   getMealsOverview() {
     const {meals} = this.state;
     return meals.map(meal => {
-      return <MealOverview meal={meal} key={'meal-'+meal.rowid} removeMeal={mealId => this.removeMeal(mealId)}></MealOverview>
+      return <MealOverview
+        key={'meal-'+meal.rowid}
+        meal={meal}
+        removeMeal={mealId => this.removeMeal(mealId)}
+        dateDetails={date => this.dateDetails(date)}
+      />
     })
+  }
+
+  dateDetails(date) {
+    this.props.navigation.navigate('Statistics', {date});
   }
 
   render() {
