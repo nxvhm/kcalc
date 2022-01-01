@@ -101,7 +101,10 @@ class HomeScreen extends React.Component {
   }
 
   dateDetails(date) {
-    this.props.navigation.navigate('Statistics', {date});
+    this.props.navigation.navigate('Statistics', {
+      screen: 'StatisticsMain',
+      params: {date}
+    });
   }
 
   render() {

@@ -2,7 +2,6 @@ import moment from "moment";
 
 export default {
   formattedDate(date) {
-    console.log(moment(date).format("MMM Do YY"));
     return moment(date).format("MMM Do YY");
   },
 
