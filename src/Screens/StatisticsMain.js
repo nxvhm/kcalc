@@ -2,29 +2,43 @@ import React from "react";
 import DB from '../Lib/DB';
 import { showMessage } from "react-native-flash-message";
 import {View, Text, SafeAreaView, ScrollView} from 'react-native';
-import { Button } from 'react-native-paper';
 import {DateContext} from "../Lib/RouteContext";
 import {colors, styles} from '../Styles';
 import { Headline } from 'react-native-paper';
 import Format from "../Lib/Format";
-
+import DateOverview from '../Components/DateOverview';
 
 class StatisticsMain extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       date: null,
-      data: false
+      data: false,
+      id: 0
     }
 
   }
 
   componentDidMount() {
-    console.log('mounteed');
+    if (this.props.route.params && this.props.route.params.date) {
+      let stateDate = this.state.date;
+      if (this.props.route.params.date != stateDate) {
+        this.getDateData(this.props.route.params.date);
+      }
+    }
   }
 
-  getDateData() {
-    return DB.getMealsForDate(this.context).then(res => {
+  componentDidUpdate() {
+    if (this.props.route.params && this.props.route.params.date) {
+      let stateDate = this.state.date;
+      if (this.props.route.params.date != stateDate) {
+        this.getDateData(this.props.route.params.date);
+      }
+    }
+  }
+
+  getDateData(date) {
+    return DB.getMealsForDate(date).then(res => {
       let data = {
         meals: [],
         calories: 0,
@@ -40,9 +54,9 @@ class StatisticsMain extends React.Component {
         ['calories', 'carbs', 'sugar', 'fats', 'protein'].forEach(nutrition => {
           data[nutrition] += Format.decimalAdjust('round', meal[nutrition], -1);
         })
+
       }
-      // this.setState({data})
-      return Promise.resolve(data);
+      this.setState({date, data})
     }).catch(err => {
       showMessage({
         type: 'error',
@@ -52,20 +66,24 @@ class StatisticsMain extends React.Component {
     })
   }
 
+  dateOverview() {
+    let {date, data} = this.state;
+    return data ? <DateOverview data={data}></DateOverview> : false;
+  }
 
   dateHeadline() {
-    let date = this.context;
+    let date = this.state.date;
     return date
       ? <Headline style={{textAlign: 'center', marginTop: 10}}>Meals data for {Format.formattedDate(date)}</Headline>
       : false
   }
 
   render() {
-    console.log(this.props.route);
     return (
       <SafeAreaView style={styles.fullViewStyle}>
         <ScrollView>
           <View>{this.dateHeadline()}</View>
+          {this.dateOverview()}
         </ScrollView>
       </SafeAreaView>
     );
