@@ -213,7 +213,7 @@ class AddMeal extends React.Component {
    */
   saveMeal() {
     let {meal} = this.state;
-    meal.date = moment(meal.date, 'D/M/yyyy').valueOf();
+    // meal.date = moment(meal.date, 'D/M/yyyy').valueOf();
     DB.saveMeal(meal).then(res => {
       let msg = {
         type: 'success',

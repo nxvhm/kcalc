@@ -1,10 +1,10 @@
 import React from "react";
 import DB from '../Lib/DB';
 import { showMessage } from "react-native-flash-message";
-import {View, Text, SafeAreaView, ScrollView} from 'react-native';
+import {View, SafeAreaView, ScrollView} from 'react-native';
 import {DateContext} from "../Lib/RouteContext";
-import {colors, styles} from '../Styles';
-import { Headline } from 'react-native-paper';
+import {styles} from '../Styles';
+import { Headline, FAB, Colors } from 'react-native-paper';
 import Format from "../Lib/Format";
 import DateOverview from '../Components/DateOverview';
 
@@ -56,7 +56,7 @@ class StatisticsMain extends React.Component {
         })
 
       }
-      this.setState({date, data})
+      this.setState({data})
     }).catch(err => {
       showMessage({
         type: 'error',
@@ -74,17 +74,33 @@ class StatisticsMain extends React.Component {
   dateHeadline() {
     let date = this.state.date;
     return date
-      ? <Headline style={{textAlign: 'center', marginTop: 10}}>Meals data for {Format.formattedDate(date)}</Headline>
+      ? <Headline style={{textAlign: 'center', marginTop: 10}}>Meals data for {date}</Headline>
       : false
   }
 
   render() {
+    let date = this.state.date;
     return (
       <SafeAreaView style={styles.fullViewStyle}>
         <ScrollView>
           <View>{this.dateHeadline()}</View>
           {this.dateOverview()}
         </ScrollView>
+
+        <FAB
+        style={{
+          position: 'absolute',
+          margin: 16,
+          left: 0,
+          bottom: 0,
+          backgroundColor: Colors.purple900,
+          color: '#fff'
+        }}
+        small
+        icon="reload"
+        onPress={() => this.getDateData(date)}
+      />
+
       </SafeAreaView>
     );
   }

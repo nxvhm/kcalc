@@ -29,7 +29,7 @@ const MealOverview = (props) => {
             <Text><Bold>Protein:</Bold> {props.meal.protein ?? 0}</Text>
           </View>
           <Button mode="text" onPress={()=>props.dateDetails(props.meal.date)}>
-            {props.meal.formatDate}
+            {props.meal.date}
           </Button>
         </Card.Content>
         <Card.Actions>
